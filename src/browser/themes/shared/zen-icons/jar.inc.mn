@@ -314,7 +314,7 @@
 *  skin/classic/browser/zen-icons/xr.svg                      (../shared/zen-icons/nucleo/xr.svg) 
 *  skin/classic/browser/zen-icons/zoom-out.svg                      (../shared/zen-icons/nucleo/zoom-out.svg) 
 #endif
-#ifdef XP_LINUX
+#if defined(XP_LINUX) || defined(XP_FREEBSD) || defined(XP_NETBSD) || defined(XP_OPENBSD)
 *  skin/classic/browser/zen-icons/algorithm.svg                      (../shared/zen-icons/nucleo/algorithm.svg) 
 *  skin/classic/browser/zen-icons/arrow-corner-down-right.svg                      (../shared/zen-icons/nucleo/arrow-corner-down-right.svg) 
 *  skin/classic/browser/zen-icons/arrow-down.svg                      (../shared/zen-icons/nucleo/arrow-down.svg) 
