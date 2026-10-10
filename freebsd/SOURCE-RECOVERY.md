@@ -1,55 +1,52 @@
-# Source Recovery
+# Source Recovery — verified FreeBSD 14.5 environment
 
-This repository preserves the native FreeBSD build work as a reproducible source delta.
+> **Scope:** This is an optional recovery path for one tested native build. It is not a general-purpose patch for every FreeBSD system and must not be assumed compatible with other OS versions, architectures, machines, toolchains, or Firefox/Zen snapshots.
 
-## Engine base
+## Verified environment
 
-The modified Firefox engine was based on:
+- OS: FreeBSD 14.5-RELEASE-p1
+- Architecture: amd64 (x86_64)
+- Build toolchain: LLVM 19
+- Computer: HP 450 Notebook PC
+- Product number: C9K33LT#ABM
+- CPU in the verified configuration: Intel Core i3-2328M, 2 cores / 4 threads, 2.20 GHz
+- Chipset: Intel HM75
+- Source: Zen Browser desktop source with its Firefox Nightly-based engine
+- Firefox engine milestone of the successful build: 157.0
+- Build metadata: Zen 1.0.0; BuildID `20261010134540`; SourceStamp `84a8300ff8579c91c9587990f6b13e32b994e5ca`
 
-- Repository: `zen-browser/desktop` engine subrepository
-- Base revision before Zen/FreeBSD engine changes: `d3ec66377c`
+These details describe the configuration in which the build was verified. They do not guarantee that the same changes will work unchanged on another computer or Nightly snapshot. This document describes a Zen/Firefox engine source tree; it does not mean that the delta is a patch for a separately installed Firefox Nightly package.
 
-The working tree produced the successful native FreeBSD build after the Zen patch set and the FreeBSD Firefox patches were applied.
+## Engine base revision
 
-## Functional engine delta
+The modified `zen-browser/desktop` engine was based on revision `d3ec66377c`, before the Zen/FreeBSD engine changes. The successful native build was produced after applying the relevant Zen patch set and FreeBSD Firefox patches.
 
-A local recovery archive was created and verified from the working tree:
+## Recovery archive
 
 - Archive: `zen-engine-functional-delta.tar.gz`
 - Size: 13,193,516 bytes
 - Tracked-file binary patch: 4,326,658 bytes
-- Additional untracked files: 181
-- `.bak` backup files excluded
-- Build artifacts excluded
+- Additional untracked source/resource files: 181
+- Backup `.bak` files and build artifacts excluded
 
-The archive contains:
+The archive contains `engine.patch`, a binary-capable Git diff from the exact base revision, and `untracked/`, containing 181 additional source/resource files with their relative paths preserved. The paths were compared against the working tree.
 
-1. `engine.patch` — the exact binary-capable Git diff from `d3ec66377c`
-2. `untracked/` — the 181 additional source/resource files required by the transformed engine tree
+## Optional recovery procedure
 
-The names and paths of all 181 untracked files were independently compared against the working tree and matched exactly.
+Use this only if the normal fork source fails to reproduce the verified behavior and you need to reconstruct the known-good engine state.
 
-## Recovery procedure
+1. Check out a clean engine tree at exactly `d3ec66377c`.
+2. Extract the archive outside the engine directory.
+3. From the engine root, apply the patch: `git apply --binary /path/to/extracted/engine.patch`.
+4. Copy the contents of the archive's `untracked/` directory into the engine root, preserving relative paths.
+5. Check the applicable Zen and FreeBSD patches against this source revision before building. Stop and investigate if they do not apply cleanly.
 
-Start from a clean checkout of the engine at revision `d3ec66377c`.
+Do not restore `.bak` files. Do not apply this delta to another engine revision without reviewing compatibility first.
 
-From the engine root:
+## Compatibility limits
 
-```sh
-git apply --binary engine.patch
-```
+This is a functional delta against one exact engine revision, not a complete Firefox/Zen source tree. The base source must be obtained separately at `d3ec66377c`. Only the environment listed above is documented as verified. Other FreeBSD releases, CPU architectures, machines, LLVM versions, or Firefox Nightly/Zen snapshots may require changes and separate testing.
 
-Then restore the files contained in `untracked/` into the engine root, preserving their relative paths.
+## Artifact location
 
-Do not restore `.bak` files.
-
-## Important distinction
-
-This is a **functional delta against the exact base engine revision**, not a standalone copy of the complete Firefox/Zen source tree. The upstream base source must therefore be obtained at `d3ec66377c` before applying this recovery delta.
-
-The successful build was performed on FreeBSD 14.5-RELEASE-p1 amd64 with LLVM 19.
-
-
-## Location of the recovery artifact
-
-The `zen-engine-functional-delta.tar.gz` recovery archive remains on the legacy `DSPaula/Zen-Browser-FreeBSD` repository, branch `publish-recovery`. It was intentionally not copied into this fork's normal source branch. Do not apply it to a different engine revision without checking the base commit.
+The recovery archive remains on the legacy `DSPaula/Zen-Browser-FreeBSD` repository, branch `publish-recovery`, separate from the normal source branch. See the recovery branch and archive there. Keeping it separate leaves the ordinary installation path unchanged while providing a clearly scoped recovery option.
